@@ -64,7 +64,7 @@ export function UploadForm({ onScan, isLoading }: UploadFormProps) {
           
           <Button type="submit" className="w-full" disabled={isLoading || !content}>
             {isLoading ? (
-              "Analizowanie..."
+              "Analyzing..."
             ) : (
               <span className="flex items-center gap-2">
                 <Play className="w-4 h-4" /> Start Scanning
