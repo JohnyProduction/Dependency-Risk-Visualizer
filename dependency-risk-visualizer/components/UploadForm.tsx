@@ -16,7 +16,8 @@ const DEMO_JSON = JSON.stringify({
   "dependencies": {
     "lodash": "4.17.15",
     "axios": "0.18.0",   
-    "react": "18.2.0",   
+    "react": "18.2.0",
+    "reac": "18.2.0",   
     "express": "4.16.0"  
   }
 }, null, 2);
