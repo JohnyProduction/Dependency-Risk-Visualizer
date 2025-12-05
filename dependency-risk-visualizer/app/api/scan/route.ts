@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { checkPackageVulnerabilities, SecurityVulnerability } from '@/lib/clients/osv-client';
-
+import { analyzeTyposquatting } from '@/lib/analyzers/typosquatting';
 
 interface ScanRequest {
   packageJson: string; 
@@ -11,7 +11,11 @@ interface PackageAnalysisResult {
   packageName: string;
   version: string;
   vulnerabilities: SecurityVulnerability[];
-  status: 'SAFE' | 'VULNERABLE' | 'UNKNOWN';
+  status: 'SAFE' | 'VULNERABLE' | 'SUSPICIOUS' | 'UNKNOWN';
+  typosquatting?: {
+    isSuspicious: boolean;
+    targetPackage?: string;
+  };
 }
 
 function cleanVersion(version: string): string {
@@ -44,14 +48,23 @@ export async function POST(request: Request) {
 
     const analysisPromises = Object.entries(dependencies).map(async ([pkgName, rawVersion]) => {
       const version = cleanVersion(rawVersion as string);
-      
       const vulns = await checkPackageVulnerabilities(pkgName, version);
+      const typoAnalysis = analyzeTyposquatting(pkgName);
+
+      let status: PackageAnalysisResult['status'] = 'SAFE';
+      
+      if (vulns.length > 0) {
+        status = 'VULNERABLE';
+      } else if (typoAnalysis.isSuspicious) {
+        status = 'SUSPICIOUS'; 
+      }
 
       const result: PackageAnalysisResult = {
         packageName: pkgName,
         version: version,
         vulnerabilities: vulns,
-        status: vulns.length > 0 ? 'VULNERABLE' : 'SAFE',
+        status: status,
+        typosquatting: typoAnalysis
       };
 
       return result;
@@ -62,9 +75,9 @@ export async function POST(request: Request) {
     const stats = {
       totalScanned: results.length,
       vulnerableCount: results.filter(r => r.status === 'VULNERABLE').length,
+      suspiciousCount: results.filter(r => r.status === 'SUSPICIOUS').length, 
       safeCount: results.filter(r => r.status === 'SAFE').length,
     };
-
     return NextResponse.json({ 
       results,
       stats

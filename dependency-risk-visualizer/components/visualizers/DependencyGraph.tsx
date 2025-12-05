@@ -20,7 +20,7 @@ interface Vulnerability {
 interface ScanResult {
     packageName: string;
     version: string;
-    status: 'SAFE' | 'VULNERABLE' | 'UNKNOWN';
+    status: 'SAFE' | 'VULNERABLE' | 'SUSPICIOUS' | 'UNKNOWN';
     vulnerabilities: Vulnerability[];
 }
 
@@ -35,9 +35,9 @@ export function DependencyGraph({ data }: Props) {
 
     nodes.push({
       id: 'root',
-      type: 'input', 
+      type: 'input',
       data: { label: 'Your Application' },
-      position: { x: 400, y: 300 }, 
+      position: { x: 400, y: 300 },
       style: { 
         background: '#1e293b', 
         color: '#fff', 
@@ -47,7 +47,7 @@ export function DependencyGraph({ data }: Props) {
       },
     });
 
-    const radius = 250; 
+    const radius = 250;
     const angleStep = (2 * Math.PI) / data.length;
 
     data.forEach((pkg, index) => {
@@ -55,9 +55,16 @@ export function DependencyGraph({ data }: Props) {
       const x = 400 + radius * Math.cos(angle);
       const y = 300 + radius * Math.sin(angle);
 
-      const isVuln = pkg.status === 'VULNERABLE';
-      const bg = isVuln ? '#fef2f2' : '#f0fdf4';
-      const border = isVuln ? '#ef4444' : '#22c55e';
+      let bg = '#f0fdf4';
+      let border = '#22c55e';
+      
+      if (pkg.status === 'VULNERABLE') {
+        bg = '#fef2f2';
+        border = '#ef4444';
+      } else if (pkg.status === 'SUSPICIOUS') {
+        bg = '#fffbeb';
+        border = '#f59e0b';
+      }
 
       nodes.push({
         id: pkg.packageName,
@@ -80,8 +87,8 @@ export function DependencyGraph({ data }: Props) {
         source: 'root',
         target: pkg.packageName,
         animated: true,
-        style: { stroke: isVuln ? '#ef4444' : '#94a3b8' },
-        markerEnd: { type: MarkerType.ArrowClosed },
+        style: { stroke: border },
+        markerEnd: { type: MarkerType.ArrowClosed, color: border },
       });
     });
 
@@ -90,6 +97,8 @@ export function DependencyGraph({ data }: Props) {
 
   const [nodes, , onNodesChange] = useNodesState(initialNodes);
   const [edges, , onEdgesChange] = useEdgesState(initialEdges);
+  useMemo(() => {
+  }, [initialNodes]);
 
   return (
     <div className="h-[500px] w-full border rounded-lg bg-slate-50 shadow-inner">
