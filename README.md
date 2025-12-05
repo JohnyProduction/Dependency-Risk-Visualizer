@@ -50,18 +50,18 @@ graph TD
 ### Installation
 
 # 1. Clone the repository
-git clone [https://github.com/JohnyProduction/dependency-risk-visualizer.git](https://github.com/JohnyProduction/dependency-risk-visualizer.git)
+> git clone [https://github.com/JohnyProduction/dependency-risk-visualizer.git](https://github.com/JohnyProduction/dependency-risk-visualizer.git)
 
 # 2. Navigate to the project directory
-cd dependency-risk-visualizer
+> cd dependency-risk-visualizer
 
 # 3. Install dependencies
-npm install
+> npm install
 
 # 4. Run the development server
-npm run dev
+> npm run dev
 
-Open http://localhost:3000 with your browser to see the result.
+> Open http://localhost:3000 with your browser to see the result.
 
 ## Usage & Demo Scenario
 1. Navigate to the Dashboard.
@@ -79,7 +79,7 @@ If the input file contains:
 "reac": "18.2.0"
 
 The system will flag this as SUSPICIOUS with the warning:
-"Potential Typosquatting detected. The name is dangerously similar to: 'react'."
+_"Potential Typosquatting detected. The name is dangerously similar to: 'react'."_
 
 ## Future Roadmap
 * [ ] Dependency Confusion: Implementation of private registry checks.
