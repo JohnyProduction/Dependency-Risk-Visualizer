@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertCircle, CheckCircle, ShieldAlert } from "lucide-react";
+import { DependencyGraph } from "@/components/visualizers/DependencyGraph";
 
 interface ScanResult {
   packageName: string;
@@ -77,6 +78,14 @@ export default function DashboardPage() {
 
         {results && stats && (
           <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <Card>
+              <CardHeader>
+                <CardTitle>Dependency Map</CardTitle>
+              </CardHeader>
+              <CardContent className="p-0">
+                <DependencyGraph data={results} />
+              </CardContent>
+            </Card>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <Card className="border-l-4 border-l-blue-500">
